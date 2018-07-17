@@ -11,7 +11,7 @@ angular.module('RecursionHelper', []).factory('RecursionHelper', ['$compile', fu
 		 * @param [link] A post-link function, or an object with function(s) registered via pre and post properties.
 		 * @returns An object containing the linking functions.
 		 */
-		compile: function(element, link){
+		compile: function(element, link, replace_existing){
 			// Normalize the link parameter
 			if(angular.isFunction(link)){
 				link = { post: link };
@@ -32,7 +32,12 @@ angular.module('RecursionHelper', []).factory('RecursionHelper', ['$compile', fu
 					}
 					// Re-add the compiled contents to the element
 					compiledContents(scope, function(clone){
-						element.append(clone);
+						if (replace_existing) {
+							element.after(clone);
+							element.remove();
+						} else {
+							element.append(clone);
+						}
 					});
 
 					// Call the post-linking function, if any
