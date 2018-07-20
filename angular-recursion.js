@@ -25,24 +25,31 @@ angular.module('RecursionHelper', []).factory('RecursionHelper', ['$compile', fu
 				/**
 				 * Compiles and re-adds the contents
 				 */
-				post: function(scope, element){
+				post: function (scope, element, attributes, controller, transcludeFn) {
 					// Compile the contents
 					if(!compiledContents){
 						compiledContents = $compile(contents);
 					}
 					// Re-add the compiled contents to the element
-					compiledContents(scope, function(clone){
+					var cloneAttachFn = function (clone) {
 						if (replace_existing) {
 							element.after(clone);
 							element.remove();
+							element = clone;
 						} else {
 							element.append(clone);
 						}
-					});
+					};
+					var options = {
+						parentBoundTranscludeFn: function (scope, cloneAttachFn, transcludeControllers, futureParentElement, scopeToChild) {
+							transcludeFn.call(null, scopeToChild, cloneAttachFn, /*futureParentElement.is('tr') ? futureParentElement.parent() :*/ futureParentElement);
+						}
+					};
+					compiledContents(scope, cloneAttachFn, options);
 
 					// Call the post-linking function, if any
 					if(link && link.post){
-						link.post.apply(null, arguments);
+						link.post.call(null, scope, element, attributes, controller, transcludeFn);
 					}
 				}
 			};
