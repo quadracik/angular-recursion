@@ -34,7 +34,7 @@ angular.module('RecursionHelper', []).factory('RecursionHelper', ['$compile', fu
 					var cloneAttachFn = function (clone) {
 						if (replace_existing) {
 							element.after(clone);
-							element.remove();
+							element.hide();
 							element = clone;
 						} else {
 							element.append(clone);
